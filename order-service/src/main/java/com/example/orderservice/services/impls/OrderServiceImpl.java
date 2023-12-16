@@ -17,7 +17,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
-    private final WebClient webClient;
+    private final WebClient.Builder webClientBuilder;
 
     @Override
     public void placeOrder(OrderRequest request) {
@@ -30,9 +30,9 @@ public class OrderServiceImpl implements OrderService {
             }).toList();
 
         // Makes call to inventory service, and places order if product is in stock
-        InventoryResponse[] response = webClient.get()
+        InventoryResponse[] response = webClientBuilder.build().get()
 //            .uri("http://localhost:8082/api/v1/inventory", Map.of("skuCode", skuCodes))
-            .uri("http://localhost:8082/api/v1/inventory",
+            .uri("http://inventory-service/api/v1/inventory",
                 uriBuilder -> uriBuilder.queryParam("skuCode", skuCodes).build())
             .retrieve()
             .bodyToMono(InventoryResponse[].class)
