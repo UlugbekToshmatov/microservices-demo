@@ -2,6 +2,8 @@ server:
   port: 8082
 
 spring:
+  application:
+    name: inventory-service
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/microservices-project
@@ -21,3 +23,8 @@ spring:
       ddl-auto: update
       naming:
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyComponentPathImpl
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
