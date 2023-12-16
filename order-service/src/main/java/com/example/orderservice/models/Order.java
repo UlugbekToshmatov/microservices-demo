@@ -19,7 +19,7 @@ public class Order extends BaseEntity {
     private String orderNumber;
 
     // Here, we assume many-to-many relationship meaning
-    // that one product can be ordered many times
+    // that one type of product can be ordered many times
     @OneToMany(cascade = CascadeType.ALL)
     private List<OrderLineItem> orderLineItems;
 }

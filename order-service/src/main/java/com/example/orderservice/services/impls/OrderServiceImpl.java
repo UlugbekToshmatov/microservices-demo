@@ -1,5 +1,6 @@
 package com.example.orderservice.services.impls;
 
+import com.example.orderservice.dto.InventoryResponse;
 import com.example.orderservice.dto.OrderLineItemsRequest;
 import com.example.orderservice.dto.OrderRequest;
 import com.example.orderservice.models.Order;
@@ -8,19 +9,40 @@ import com.example.orderservice.repositories.OrderRepository;
 import com.example.orderservice.services.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
+    private final WebClient webClient;
 
     @Override
     public void placeOrder(OrderRequest request) {
+        List<String> skuCodes = new LinkedList<>();
+
         List<OrderLineItem> orderLineItems = request.getOrderLineItemsRequests().stream()
-            .map(this::mapDtoToEntity).toList();
+            .map(orderLineItemsRequest -> {
+                skuCodes.add(orderLineItemsRequest.getSkuCode());
+                return mapDtoToEntity(orderLineItemsRequest);
+            }).toList();
+
+        // Makes call to inventory service, and places order if product is in stock
+        InventoryResponse[] response = webClient.get()
+//            .uri("http://localhost:8082/api/v1/inventory", Map.of("skuCode", skuCodes))
+            .uri("http://localhost:8082/api/v1/inventory",
+                uriBuilder -> uriBuilder.queryParam("skuCode", skuCodes).build())
+            .retrieve()
+            .bodyToMono(InventoryResponse[].class)
+            .block();
+
+        assert response != null;
+        boolean allProductsPresentInStock = Arrays.stream(response).allMatch(InventoryResponse::getIsInStock);
+
+        if (!allProductsPresentInStock)
+            throw new IllegalArgumentException("Product is not in stock, please, try again later");
 
         orderRepository.save(
             Order.builder()

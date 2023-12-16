@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface InventoryRepository extends JpaRepository<Inventory, Long> {
     Boolean existsBySkuCodeAndDeletedFalse(String skuCode);
     List<Inventory> findAllByDeletedFalse();
+    List<Inventory> findAllBySkuCodeInAndDeletedFalse(List<String> skuCode);
 }
