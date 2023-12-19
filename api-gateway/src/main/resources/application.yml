@@ -1,0 +1,58 @@
+eureka:
+  client:
+#    register-with-eureka: false
+    service-url:
+      defaultZone: http://eureka:password@localhost:8761/eureka
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+        routes:
+          - id: product-service
+            uri: lb://product-service
+            predicates:
+              - Path=/api/v1/product/**
+
+          - id: order-service
+            uri: lb://order-service
+            predicates:
+              - Path=/api/v1/order/**
+
+          - id: discovery-service
+            uri: http://localhost:8761
+            predicates:
+              - Path=/eureka/web
+            filters:
+              - SetPath=/
+
+          - id: discovery-service-eureka
+            uri: http://localhost:8761
+            predicates:
+              - Path=/eureka/**
+
+          - id: path_route
+            uri: https://kun.uz
+            predicates:
+              - Path=/red/{segment},/blue/{segment}
+            filters:
+              - SetPath=/en
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8181/realms/spring-boot-microservices-realm
+
+#  cloud:
+#    config:
+#      enabled: false
+logging:
+  level:
+    org:
+      springframework:
+        cloud:
+          gateway: trace
+          gateway.route.RouteDefinitionLocator: info
+    root: info

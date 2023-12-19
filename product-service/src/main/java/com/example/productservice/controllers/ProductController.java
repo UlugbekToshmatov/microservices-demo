@@ -26,4 +26,9 @@ public class ProductController {
     public ResponseEntity<List<ProductResponse>> getAll() {
         return ResponseEntity.ok(productService.getAllProducts());
     }
+
+    @PutMapping("{id}")
+    public String test(@PathVariable String id, @RequestBody ProductRequest request) {
+        return "Updated: " + id;
+    }
 }
