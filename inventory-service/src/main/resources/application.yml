@@ -1,6 +1,8 @@
+# running inventory-service on random ports to run multiple instances of inventory-service to load balance
 server:
   port: 0
 
+# Database connection configurations
 spring:
   application:
     name: inventory-service
@@ -24,6 +26,7 @@ spring:
       naming:
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyComponentPathImpl
 
+# Registering inventory-service in Eureka Server as Client
 eureka:
   client:
     service-url:

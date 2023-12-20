@@ -1,3 +1,4 @@
+# Eureka Server configurations
 eureka:
   username: ${EUREKA_USERNAME:eureka}
   password: ${EUREKA_PASSWORD:password}
@@ -11,10 +12,6 @@ eureka:
 
 server:
   port: 8761
-
-#spring:
-#  config:
-#    import: optional:configserver:http://localhost:8888
 
 spring:
   cloud:

@@ -1,3 +1,4 @@
+# Connecting to MongoDB database
 spring:
   application:
     name: product-service
@@ -8,8 +9,8 @@ spring:
 server:
   port: 8082
 
+# Registering product-service in Eureka Server as Client
 eureka:
   client:
-    #    register-with-eureka: false
     service-url:
       defaultZone: http://eureka:password@localhost:8761/eureka

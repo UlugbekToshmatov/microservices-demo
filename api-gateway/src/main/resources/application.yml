@@ -1,9 +1,11 @@
+# Registering API Gateway in Eureka Server
 eureka:
   client:
-#    register-with-eureka: false
     service-url:
+      # registering api-gateway in Eureka Server as Client
       defaultZone: http://eureka:password@localhost:8761/eureka
 
+# Routing requests to microservices
 spring:
   application:
     name: api-gateway
@@ -39,15 +41,14 @@ spring:
             filters:
               - SetPath=/en
 
+# Securing Microservice with KeyCloak Server
   security:
     oauth2:
       resourceserver:
         jwt:
           issuer-uri: http://localhost:8181/realms/spring-boot-microservices-realm
 
-#  cloud:
-#    config:
-#      enabled: false
+# Logging
 logging:
   level:
     org:
