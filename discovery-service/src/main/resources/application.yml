@@ -14,3 +14,9 @@ eureka:
 
 server:
   port: 8761
+
+# Zipkin configurations
+management:
+  tracing:
+    sampling:
+      probability: 1.0

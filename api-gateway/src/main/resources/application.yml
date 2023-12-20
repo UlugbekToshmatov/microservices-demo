@@ -49,6 +49,12 @@ spring:
         jwt:
           issuer-uri: http://localhost:8181/realms/spring-boot-microservices-realm
 
+# Zipkin configurations
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+
 # Logging
 logging:
   level:

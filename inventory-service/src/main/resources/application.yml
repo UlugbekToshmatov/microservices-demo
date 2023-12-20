@@ -31,3 +31,9 @@ eureka:
   client:
     service-url:
       defaultZone: http://eureka:password@localhost:8761/eureka
+
+# Zipkin configurations
+management:
+  tracing:
+    sampling:
+      probability: 1.0

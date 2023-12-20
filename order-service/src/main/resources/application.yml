@@ -44,6 +44,11 @@ management:
     health:
       show-details: always
 
+# Zipkin configurations
+  tracing:
+    sampling:
+      probability: 1.0
+
 # Resilience4j circuit breaker configurations for inventory-service
 resilience4j:
   circuitbreaker:
@@ -59,13 +64,11 @@ resilience4j:
         wait-duration-in-open-state: 5s
         permitted-number-of-calls-in-half-open-state: 3
         automatic-transition-from-open-to-half-open-enabled: true
-
   timelimiter:
     instances:
       inventory:
         # if inventory-service is up, but responding very slowly, resilience4j waits for response for up to 3 sec
         timeout-duration: 3s
-
   retry:
     instances:
       inventory:
