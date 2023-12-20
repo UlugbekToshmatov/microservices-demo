@@ -29,6 +29,9 @@ public class OrderController {
         return CompletableFuture.supplyAsync(() -> orderService.placeOrder(request));
     }
 
+    // If inventory-service is not available when order-service requests,
+    // CircuitBreaker uses the following method as a fallback consuming thrown exception.
+    // Request and response parameters of the method signature must the same as in placeOrder() method.
     public CompletableFuture<String> fallbackMethod(OrderRequest request, RuntimeException exception) {
         return CompletableFuture.supplyAsync(() -> "Oops, something went wrong! Please, try ordering later.");
     }
