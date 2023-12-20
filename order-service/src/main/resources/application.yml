@@ -30,3 +30,45 @@ spring:
       ddl-auto: update
       naming:
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyComponentPathImpl
+
+# Actuator configurations
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+# Resilience4j circuit breaker configurations for inventory-service
+resilience4j:
+  circuitbreaker:
+    instances:
+      inventory:
+        register-health-indicator: true
+        event-consumer-buffer-size: 10
+        # resilience4j makes requests up to 5 times based on COUNT_BASED algorithm till inventory-service responds
+        sliding-window-type: COUNT_BASED
+        # if inventory-service is down, after 5 requests status will be changed from closed to open
+        sliding-window-size: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 5s
+        permitted-number-of-calls-in-half-open-state: 3
+        automatic-transition-from-open-to-half-open-enabled: true
+
+  timelimiter:
+    instances:
+      inventory:
+        # if inventory-service is up, but responding very slowly, resilience4j waits for response for up to 3 sec
+        timeout-duration: 3s
+
+  retry:
+    instances:
+      inventory:
+        # resilience4j resends requests 3 times every 4 seconds
+        max-attempts: 3
+        wait-duration: 4s

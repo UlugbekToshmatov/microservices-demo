@@ -20,7 +20,7 @@ public class OrderServiceImpl implements OrderService {
     private final WebClient.Builder webClientBuilder;
 
     @Override
-    public void placeOrder(OrderRequest request) {
+    public String placeOrder(OrderRequest request) {
         List<String> skuCodes = new LinkedList<>();
 
         List<OrderLineItem> orderLineItems = request.getOrderLineItemsRequests().stream()
@@ -50,6 +50,8 @@ public class OrderServiceImpl implements OrderService {
                 .orderLineItems(orderLineItems)
                 .build()
         );
+
+        return "Order placed successfully";
     }
 
     private OrderLineItem mapDtoToEntity(OrderLineItemsRequest itemsRequest) {

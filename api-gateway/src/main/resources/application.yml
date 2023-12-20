@@ -5,6 +5,7 @@ eureka:
       # registering api-gateway in Eureka Server as Client
       defaultZone: http://eureka:password@localhost:8761/eureka
 
+
 # Routing requests to microservices
 spring:
   application:

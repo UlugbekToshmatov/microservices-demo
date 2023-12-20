@@ -2,12 +2,14 @@
 eureka:
   username: ${EUREKA_USERNAME:eureka}
   password: ${EUREKA_PASSWORD:password}
+  # initializes Eureka Server instance
   instance:
     hostname: localhost
   client:
     register-with-eureka: false
     fetch-registry: false
     service-url:
+      # serving as Eureka Server, discovery-service registers other client services here
       defaultZone: http://eureka:password@${eureka.instance.hostname}:${server.port}/eureka
 
 server:
