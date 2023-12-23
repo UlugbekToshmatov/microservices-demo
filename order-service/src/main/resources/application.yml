@@ -31,6 +31,13 @@ spring:
       naming:
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyComponentPathImpl
 
+# Kafka Producer configurations
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
 # Actuator configurations
 management:
   health:
@@ -68,10 +75,10 @@ resilience4j:
     instances:
       inventory:
         # if inventory-service is up, but responding very slowly, resilience4j waits for response for up to 3 sec
-        timeout-duration: 3s
-  retry:
-    instances:
-      inventory:
-        # resilience4j resends requests 3 times every 4 seconds
-        max-attempts: 3
-        wait-duration: 4s
+        timeout-duration: 5s
+#  retry:
+#    instances:
+#      inventory:
+#        # resilience4j resends requests 3 times every 2 seconds
+#        max-attempts: 3
+#        wait-duration: 2s

@@ -26,7 +26,7 @@ public class InventoryServiceImpl implements InventoryService {
     @SneakyThrows
     public List<InventoryResponse> isInStock(List<String> skuCode) {
         log.info("Waiting for inventory-service started");
-        Thread.sleep(10000);
+        Thread.sleep(3000);
         log.info("Waiting for inventory-service finished");
 
         return inventoryRepository.findAllBySkuCodeInAndDeletedFalse(skuCode).stream()

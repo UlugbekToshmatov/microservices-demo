@@ -3,11 +3,16 @@ package com.example.orderservice.services.impls;
 import com.example.orderservice.dto.InventoryResponse;
 import com.example.orderservice.dto.OrderLineItemsRequest;
 import com.example.orderservice.dto.OrderRequest;
+import com.example.orderservice.events.OrderPlacedEvent;
 import com.example.orderservice.models.Order;
 import com.example.orderservice.models.OrderLineItem;
 import com.example.orderservice.repositories.OrderRepository;
 import com.example.orderservice.services.OrderService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -18,6 +23,7 @@ import java.util.*;
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final WebClient.Builder webClientBuilder;
+    private final KafkaTemplate<String, OrderPlacedEvent> kafkaTemplate;
 
     @Override
     public String placeOrder(OrderRequest request) {
@@ -44,13 +50,18 @@ public class OrderServiceImpl implements OrderService {
         if (!allProductsPresentInStock)
             throw new IllegalArgumentException("Product is not in stock, please, try again later");
 
-        orderRepository.save(
+        Order savedOrder = orderRepository.save(
             Order.builder()
                 .orderNumber(UUID.randomUUID().toString())
                 .orderLineItems(orderLineItems)
                 .build()
         );
 
+        Message<OrderPlacedEvent> message = MessageBuilder
+            .withPayload(new OrderPlacedEvent(savedOrder.getOrderNumber()))
+            .setHeader(KafkaHeaders.TOPIC, "notificationTopic")
+            .build();
+        kafkaTemplate.send(message);
         return "Order placed successfully";
     }
 

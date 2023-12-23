@@ -22,17 +22,25 @@ public class OrderController {
 
     @PostMapping
     @CircuitBreaker(name = "inventory", fallbackMethod = "fallbackMethod")
-    @TimeLimiter(name = "inventory")
-    @Retry(name = "inventory")
+    @TimeLimiter(name = "inventory", fallbackMethod = "timeoutHandler")
+//    @Retry(name = "inventory", fallbackMethod = "retryHandler")
     // TimeLimiter uses CompletableFuture<T> for asynchronous communications
     public CompletableFuture<String> placeOrder(@RequestBody OrderRequest request) {
-        return CompletableFuture.supplyAsync(() -> orderService.placeOrder(request));
+        return CompletableFuture.completedFuture(orderService.placeOrder(request));
     }
 
     // If inventory-service is not available when order-service requests,
     // CircuitBreaker uses the following method as a fallback consuming thrown exception.
-    // Request and response parameters of the method signature must the same as in placeOrder() method.
+    // Request and response parameters of the method signature must be the same as in placeOrder() method.
     public CompletableFuture<String> fallbackMethod(OrderRequest request, RuntimeException exception) {
-        return CompletableFuture.supplyAsync(() -> "Oops, something went wrong! Please, try ordering later.");
+        return CompletableFuture.completedFuture("Oops, something went wrong! Please, try ordering later.");
+    }
+
+    public CompletableFuture<String> timeoutHandler(OrderRequest request, RuntimeException exception) {
+        return CompletableFuture.completedFuture("Request timed out! Please, try ordering later.");
+    }
+
+    public CompletableFuture<String> retryHandler(OrderRequest request, RuntimeException exception) {
+        return CompletableFuture.completedFuture("Retrying to connect!");
     }
 }
