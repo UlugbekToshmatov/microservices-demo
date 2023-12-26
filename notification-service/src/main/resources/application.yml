@@ -13,6 +13,7 @@ management:
     sampling:
       probability: 1.0
 
+# Kafka Consumer configurations
 spring:
   kafka:
     bootstrap-servers: localhost:9092
@@ -22,6 +23,7 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       auto-offset-reset: earliest
       properties:
+#        spring.json.type.mapping: event:com.example.notificationservice.events.OrderPlacedEvent
         spring:
           json:
             value:
@@ -31,5 +33,6 @@ spring:
               mapping: 'com.example.orderservice.events.OrderPlacedEvent:com.example.notificationservice.events.OrderPlacedEvent'
             trusted:
               packages: 'com.example.orderservice.events.OrderPlacedEvent'
+
   application:
     name: notification-service
