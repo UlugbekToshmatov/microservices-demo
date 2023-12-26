@@ -74,9 +74,15 @@
 
 	<build>
 		<plugins>
+<!--			https://www.baeldung.com/spring-boot-docker-images		-->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<layers>
+						<enabled>true</enabled>
+					</layers>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

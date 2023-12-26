@@ -1,0 +1,25 @@
+FROM eclipse-temurin:17.0.4.1_1-jre as builder
+WORKDIR extracted
+ADD target/*.jar app.jar
+
+# this command extracts all the layers from the spring app (app.jar)
+# to subsequent folders in /extracted folder in docker cache
+RUN java -Djarmode=layertools -jar app.jar extract
+
+FROM eclipse-temurin:17.0.4.1_1-jre
+
+WORKDIR application
+
+# here, the extracted layers above are now copied to /application folder
+# in container image (only changed layers are copied, not the whole app)
+COPY --from=builder extracted/dependencies/ ./
+COPY --from=builder extracted/spring-boot-loader/ ./
+COPY --from=builder extracted/snapshot-dependencies/ ./
+# all the source code is stored in application layer of the jar file
+COPY --from=builder extracted/application/ ./
+
+EXPOSE 8080
+
+# here, only the updated layers of the jar file are built to create
+# the docker image of the app
+ENTRYPOINT ["java", "org.springframework.boot.loader.JarLauncher"]
